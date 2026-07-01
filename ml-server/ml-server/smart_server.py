@@ -19,13 +19,12 @@ def load_model():
     """Load the comprehensive model with both category and severity classifiers"""
     global model_data, model_loaded
     
-    MODEL_PATH = os.environ.get(
-    "MODEL_PATH",
-    "text_model.joblib"
-    )
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    if not os.path.exists(MODEL_PATH):
-       MODEL_PATH = "comprehensive_model.joblib"
+    MODEL_PATH = os.environ.get(
+        "MODEL_PATH",
+        os.path.join(BASE_DIR, "comprehensive_model.joblib")
+    )
 
     model_path = MODEL_PATH
     
