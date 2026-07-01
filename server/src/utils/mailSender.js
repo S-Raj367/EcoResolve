@@ -4,16 +4,16 @@ const mailSender = async(email,title,body)=>{
     
     try {
 
-        const transporter = nodemailer.createTransport({
-            host: 	process.env.MAIL_HOST ,
-            port: process.env.MAIL_PORT || 465,
-            secure: process.env.MAIL_SECURE || true, // true for 465, false for other ports
+      const transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: Number(process.env.MAIL_PORT),
+    secure: process.env.MAIL_SECURE === "true",
 
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
-        });
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+    },
+});
         // console.log('Mail transporter created successfully.');
         // console.log(transporter);
         const info = await transporter.sendMail({
