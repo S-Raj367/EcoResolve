@@ -35,6 +35,19 @@ export const generateAccessAndRefreshToken= async(userId)=>{
     }
 }
 
+const cookieOptions = {
+    httpOnly: true,
+
+    secure: process.env.NODE_ENV === "production",
+
+    sameSite:
+        process.env.NODE_ENV === "production"
+            ? "none"
+            : "lax",
+
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export const sendOTP= asyncHandler(async (req, res) => {
     try {
         const {email}= req.body;
@@ -256,18 +269,18 @@ export const loginCitizen = asyncHandler(async (req, res) => {
             throw new ApiError(500, "Something went wrong while fetching user details");
         }
 
-        // Set cookie options
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        };
+        // // Set cookie options
+        // const options = {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "strict",
+        //     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        // };
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
             .json(
             new ApiResponse(
                 200,
@@ -312,17 +325,17 @@ export const loginAdmin =  asyncHandler(async (req, res) => {
         }
 
         // Set cookie options
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        };
+        // const options = {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "strict",
+        //     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        // };
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
             .json(
             new ApiResponse(
                 200,
@@ -368,17 +381,17 @@ export const loginStaff =  asyncHandler(async (req, res) => {
         }
 
         // Set cookie options
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        };
+        // const options = {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "strict",
+        //     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        // };
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
             .json(
             new ApiResponse(
                 200,
@@ -419,17 +432,17 @@ export const loginSuperAdmin = asyncHandler(async (req, res) => {
             throw new ApiError(500, "Something went wrong while fetching user details");
         }
 
-        const options = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        };
+        // const options = {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "strict",
+        //     maxAge: 7 * 24 * 60 * 60 * 1000
+        // };
 
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
             .json(
             new ApiResponse(
                 200,
@@ -509,8 +522,8 @@ export const logout = asyncHandler(async (req, res) => {
         
         return res
             .status(200)
-            .clearCookie("accessToken")
-            .clearCookie("refreshToken")
+            .clearCookie("accessToken", cookieOptions)
+            .clearCookie("refreshToken", cookieOptions)
             .json(new ApiResponse(200, null, "User logged out successfully"));
     } catch (error) {
         throw new ApiError(500, error.message || "Something went wrong while logging out");

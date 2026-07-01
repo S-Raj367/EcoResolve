@@ -9,12 +9,23 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+PORT = int(os.environ.get("PORT", 5000))
+DEBUG = os.environ.get("FLASK_ENV") != "production"
 # Load your trained model
+MODEL_PATH = os.environ.get(
+    "MODEL_PATH",
+    "text_model.joblib"
+)
+
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = "comprehensive_model.joblib"
+
 try:
-    model = joblib.load('text_model.joblib')
-    print("Model loaded successfully!")
+    model = joblib.load(MODEL_PATH)
+    print(f"Loaded model: {MODEL_PATH}")
+
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(e)
     model = None
 
 # Hazard type mapping (adjust based on your model's output)
@@ -135,10 +146,10 @@ def predict_complaint():
 @app.route('/health')
 def health_check():
     return jsonify({
-        "status": "healthy",
+        "status": "healthy" if model else "degraded",
         "model_loaded": model is not None,
         "timestamp": datetime.now().isoformat()
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=DEBUG, host='0.0.0.0', port=PORT)

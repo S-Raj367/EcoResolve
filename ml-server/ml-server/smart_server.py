@@ -19,7 +19,15 @@ def load_model():
     """Load the comprehensive model with both category and severity classifiers"""
     global model_data, model_loaded
     
-    model_path = 'text_model.joblib'
+    MODEL_PATH = os.environ.get(
+    "MODEL_PATH",
+    "text_model.joblib"
+    )
+
+    if not os.path.exists(MODEL_PATH):
+       MODEL_PATH = "comprehensive_model.joblib"
+
+    model_path = MODEL_PATH
     
     if not os.path.exists(model_path):
         logger.error(f"❌ Model file not found: {model_path}")
@@ -273,7 +281,7 @@ class MLComplaintHandler(BaseHTTPRequestHandler):
         }
         self.wfile.write(json.dumps(response).encode())
 
-def run_server(port=5000):
+def run_server(port=int(os.environ.get("PORT", 5000))):
     """Start the HTTP server"""
     logger.info("🚀 Starting ML Complaint Classification Server...")
     
@@ -285,8 +293,8 @@ def run_server(port=5000):
     httpd = HTTPServer(server_address, MLComplaintHandler)
     
     logger.info(f"🌐 Server running on http://localhost:{port}")
-    logger.info("❤️  Health check: http://localhost:5000/health")
-    logger.info("📝 Prediction endpoint: POST http://localhost:5000/predict")
+    logger.info(f"❤️ Health check: http://localhost:{port}/health")
+    logger.info( f"POST http://localhost:{port}/predict")
     
     try:
         httpd.serve_forever()

@@ -113,7 +113,7 @@ const ComplaintForm = () => {
   const [autoDetected, setAutoDetected] = useState(false);
   const [serverStatus, setServerStatus] = useState('checking');
 
-  const FLASK_SERVER_URL = 'http://localhost:5000';
+  const FLASK_SERVER_URL = import.meta.env.VITE_ML_SERVER_URL;
 
   // Department mapping based on problem type
   const departmentMapping = {
