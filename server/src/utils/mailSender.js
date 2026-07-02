@@ -33,43 +33,41 @@
 // }
 // export default mailSender;
 
-import * as brevo from "@getbrevo/brevo";
-
-const apiInstance = new brevo.TransactionalEmailsApi();
-
-apiInstance.setApiKey(
-    brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-);
+import axios from "axios";
 
 const mailSender = async (email, title, body) => {
     try {
-        const sendSmtpEmail = new brevo.SendSmtpEmail();
-
-        sendSmtpEmail.subject = title;
-        sendSmtpEmail.htmlContent = body;
-
-        sendSmtpEmail.sender = {
-            name: "Snehal Raj",
-            email: "rajsnehal243@gmail.com"
-        };
-
-        sendSmtpEmail.to = [
+        const response = await axios.post(
+            "https://api.brevo.com/v3/smtp/email",
             {
-                email: email
+                sender: {
+                    name: "EcoResolve",
+                    email: process.env.BREVO_SENDER_EMAIL,
+                },
+                to: [
+                    {
+                        email: email,
+                    },
+                ],
+                subject: title,
+                htmlContent: body,
+            },
+            {
+                headers: {
+                    "api-key": process.env.BREVO_API_KEY,
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
             }
-        ];
+        );
 
-        const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-
-        return response;
-
+        return response.data;
     } catch (error) {
-
-        console.error(error);
-
+        console.error(
+            "Brevo Error:",
+            error.response?.data || error.message
+        );
         throw error;
-
     }
 };
 
